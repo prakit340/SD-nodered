@@ -1,0 +1,1125 @@
+[
+    {
+        "id": "267c3169178c5dbc",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "629ce77deae47e99",
+        "type": "inject",
+        "z": "267c3169178c5dbc",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "แมววิ่งบนน้ำ",
+        "payloadType": "str",
+        "x": 210,
+        "y": 500,
+        "wires": [
+            [
+                "369b7beaabfbd834"
+            ]
+        ]
+    },
+    {
+        "id": "51c86de785c560fe",
+        "type": "debug",
+        "z": "267c3169178c5dbc",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 420,
+        "y": 880,
+        "wires": []
+    },
+    {
+        "id": "fa897b6bed3e2f93",
+        "type": "http request",
+        "z": "267c3169178c5dbc",
+        "name": "SD API txt2img",
+        "method": "POST",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "https://0ba7-58-11-79-159.ngrok-free.app/sdapi/v1/txt2img",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": false,
+        "x": 220,
+        "y": 1020,
+        "wires": [
+            [
+                "446225dba454d784"
+            ]
+        ]
+    },
+    {
+        "id": "446225dba454d784",
+        "type": "json",
+        "z": "267c3169178c5dbc",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 390,
+        "y": 1020,
+        "wires": [
+            [
+                "d9827a87d8f97d6a",
+                "5339864b8523267d"
+            ]
+        ]
+    },
+    {
+        "id": "0a6c5fdd7fad45e4",
+        "type": "debug",
+        "z": "267c3169178c5dbc",
+        "name": "debug 2",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1000,
+        "y": 1020,
+        "wires": []
+    },
+    {
+        "id": "d9827a87d8f97d6a",
+        "type": "function",
+        "z": "267c3169178c5dbc",
+        "name": "ดึงเฉพาะรุปภาพ",
+        "func": "msg.payload = msg.payload.images;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 580,
+        "y": 1020,
+        "wires": [
+            [
+                "0174318f44a311fc",
+                "fa1abaf4.885038"
+            ]
+        ]
+    },
+    {
+        "id": "a9996aeec2987f8b",
+        "type": "image",
+        "z": "267c3169178c5dbc",
+        "name": "",
+        "width": 160,
+        "data": "payload",
+        "dataType": "msg",
+        "thumbnail": true,
+        "active": true,
+        "pass": false,
+        "outputs": 0,
+        "x": 1020,
+        "y": 1120,
+        "wires": []
+    },
+    {
+        "id": "9c2232b5e7a70d10",
+        "type": "function",
+        "z": "267c3169178c5dbc",
+        "name": "Prompt Schema",
+        "func": "let seed = flow.get(\"seed\");\n\nif (seed === undefined || seed === null){\n    seed = -1;\n}else{\n    seed = flow.get(\"seed\");\n}\n\nmsg.payload = {\n    \"prompt\": \"<lora:sketch-pencil:1>\" + msg.payload,\n    \"negative_prompt\": \"\",\n    \"seed\": seed\n};\n\nreturn msg;\n\n//\"prompt\": \"<lora:sketch-pencil:1>\" + msg.payload,",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 240,
+        "y": 900,
+        "wires": [
+            [
+                "fa897b6bed3e2f93",
+                "51c86de785c560fe"
+            ]
+        ]
+    },
+    {
+        "id": "fa1abaf4.885038",
+        "type": "template",
+        "z": "267c3169178c5dbc",
+        "name": "Image in",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "<img src=\"data:image/png;base64,{{payload}}\"style=\"width=\"512\" height=\"512\"\"/>",
+        "output": "str",
+        "x": 660,
+        "y": 1200,
+        "wires": [
+            [
+                "b42fd1dc.ba144"
+            ]
+        ]
+    },
+    {
+        "id": "b42fd1dc.ba144",
+        "type": "ui_template",
+        "z": "267c3169178c5dbc",
+        "group": "b586a8f7.e060e8",
+        "name": "Preview",
+        "order": 13,
+        "width": "16",
+        "height": "10",
+        "format": "<div ng-bind-html=\"msg.payload\"></div>",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": false,
+        "templateScope": "local",
+        "className": "",
+        "x": 660,
+        "y": 1300,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "5c10bdf0.aa77f4",
+        "type": "comment",
+        "z": "267c3169178c5dbc",
+        "name": "แปล ไทยเป็น อังกฤษ",
+        "info": "",
+        "x": 210,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "22ddbf7b9e6879e6",
+        "type": "ui_form",
+        "z": "267c3169178c5dbc",
+        "name": "",
+        "label": "",
+        "group": "04288908e88d019f",
+        "order": 1,
+        "width": "6",
+        "height": "1",
+        "options": [
+            {
+                "label": "เพศ",
+                "value": "gender",
+                "type": "text",
+                "required": true,
+                "rows": null
+            },
+            {
+                "label": "อายุ",
+                "value": "age",
+                "type": "number",
+                "required": true,
+                "rows": null
+            },
+            {
+                "label": "รูปหน้า",
+                "value": "faceShape",
+                "type": "text",
+                "required": true,
+                "rows": null
+            },
+            {
+                "label": "ลักษณะผม",
+                "value": "hair",
+                "type": "text",
+                "required": true,
+                "rows": null
+            },
+            {
+                "label": "ลักษณะคิ้ว",
+                "value": "eyebrows",
+                "type": "text",
+                "required": true,
+                "rows": null
+            },
+            {
+                "label": "ลักษณะดวงตา",
+                "value": "eyes",
+                "type": "text",
+                "required": true,
+                "rows": null
+            },
+            {
+                "label": "ลักษณะจมูก",
+                "value": "nose",
+                "type": "text",
+                "required": true,
+                "rows": null
+            },
+            {
+                "label": "ลักษณะกราม",
+                "value": "jaw",
+                "type": "text",
+                "required": true,
+                "rows": null
+            },
+            {
+                "label": "ลักษณะหนวดเครา",
+                "value": "beard",
+                "type": "text",
+                "required": true,
+                "rows": null
+            }
+        ],
+        "formValue": {
+            "gender": "",
+            "age": "",
+            "faceShape": "",
+            "hair": "",
+            "eyebrows": "",
+            "eyes": "",
+            "nose": "",
+            "jaw": "",
+            "beard": ""
+        },
+        "payload": "",
+        "submit": "สร้าง Prompt",
+        "cancel": "ยกเลิก",
+        "topic": "topic",
+        "topicType": "msg",
+        "splitLayout": false,
+        "className": "",
+        "x": 170,
+        "y": 160,
+        "wires": [
+            [
+                "20ada9d7817ac088",
+                "1cab958f3d19f865",
+                "e9bcd24b620fdb67"
+            ]
+        ]
+    },
+    {
+        "id": "befb3e8507a7de1f",
+        "type": "ui_text",
+        "z": "267c3169178c5dbc",
+        "group": "b586a8f7.e060e8",
+        "order": 6,
+        "width": 0,
+        "height": 0,
+        "name": "แสดงผลหลังจาก Translate",
+        "label": "English output prompt: ",
+        "format": "{{msg.payload}}",
+        "layout": "row-left",
+        "className": "",
+        "x": 830,
+        "y": 500,
+        "wires": []
+    },
+    {
+        "id": "1cab958f3d19f865",
+        "type": "debug",
+        "z": "267c3169178c5dbc",
+        "name": "debug 5",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 540,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "20ada9d7817ac088",
+        "type": "function",
+        "z": "267c3169178c5dbc",
+        "name": "เรียบเรียงภาษาไทยจากฟอร์ม",
+        "func": "\nmsg.payload =  \"เพศ\" + msg.payload.gender + \", อายุ \" + msg.payload.age + \n\", โครงใบหน้า \" + msg.payload.faceShape + \n\", ผม\" + msg.payload.hair + \", ลักษณะคิ้ว \" + msg.payload.eyebrows + \n\", ลักษณะดวงตา\" + msg.payload.eyes + \", ลักษณะจมูก \" + msg.payload.nose + \n\", โครงสร้างกราม \" + msg.payload.jaw + \", เครา\" + msg.payload.beard;\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 440,
+        "y": 160,
+        "wires": [
+            [
+                "1cab958f3d19f865",
+                "7b20a25a0fdcdce6"
+            ]
+        ]
+    },
+    {
+        "id": "cbf0e3439a99c88f",
+        "type": "ui_text",
+        "z": "267c3169178c5dbc",
+        "group": "b586a8f7.e060e8",
+        "order": 5,
+        "width": 0,
+        "height": 0,
+        "name": "แสดงผลฟอร์ม Thai Input",
+        "label": "Thai Input:",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "x": 970,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "b06db71cc659d2de",
+        "type": "http request",
+        "z": "267c3169178c5dbc",
+        "name": "SD API progress",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "https://0ba7-58-11-79-159.ngrok-free.app/sdapi/v1/progress?skip_current_image=true",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": false,
+        "x": 440,
+        "y": 1480,
+        "wires": [
+            [
+                "7eb817e3d47e44b2"
+            ]
+        ]
+    },
+    {
+        "id": "02928101a8d95ce6",
+        "type": "inject",
+        "z": "267c3169178c5dbc",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "1",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 230,
+        "y": 1480,
+        "wires": [
+            [
+                "b06db71cc659d2de"
+            ]
+        ]
+    },
+    {
+        "id": "df967dd6b94c5d4b",
+        "type": "debug",
+        "z": "267c3169178c5dbc",
+        "name": "debug 6",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1000,
+        "y": 1480,
+        "wires": []
+    },
+    {
+        "id": "cf24a930037f4d02",
+        "type": "function",
+        "z": "267c3169178c5dbc",
+        "name": "ดึงเฉพาะ Progress",
+        "func": "msg.payload = (msg.payload.progress * 100).toFixed(2);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 810,
+        "y": 1480,
+        "wires": [
+            [
+                "df967dd6b94c5d4b",
+                "1e42186fc1ec2203"
+            ]
+        ]
+    },
+    {
+        "id": "7eb817e3d47e44b2",
+        "type": "json",
+        "z": "267c3169178c5dbc",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 610,
+        "y": 1480,
+        "wires": [
+            [
+                "cf24a930037f4d02"
+            ]
+        ]
+    },
+    {
+        "id": "1e42186fc1ec2203",
+        "type": "ui_text",
+        "z": "267c3169178c5dbc",
+        "group": "b586a8f7.e060e8",
+        "order": 8,
+        "width": 0,
+        "height": 0,
+        "name": "Progress ขณะ Gen รูป",
+        "label": "Progress: ",
+        "format": "{{msg.payload}} %",
+        "layout": "row-left",
+        "className": "",
+        "x": 1040,
+        "y": 1540,
+        "wires": []
+    },
+    {
+        "id": "daafaa59c08b2a3c",
+        "type": "comment",
+        "z": "267c3169178c5dbc",
+        "name": "รับข้อมูลจากฟอร์ม",
+        "info": "",
+        "x": 200,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "e2512a0e69373ebc",
+        "type": "comment",
+        "z": "267c3169178c5dbc",
+        "name": "ดึง Progress",
+        "info": "",
+        "x": 210,
+        "y": 1420,
+        "wires": []
+    },
+    {
+        "id": "5339864b8523267d",
+        "type": "function",
+        "z": "267c3169178c5dbc",
+        "name": "ดึง Info ",
+        "func": "msg.payload = msg.payload.info;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 490,
+        "y": 940,
+        "wires": [
+            [
+                "6456c98f1c27da9f"
+            ]
+        ]
+    },
+    {
+        "id": "6456c98f1c27da9f",
+        "type": "json",
+        "z": "267c3169178c5dbc",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 630,
+        "y": 860,
+        "wires": [
+            [
+                "dc17f1b02c456ee7"
+            ]
+        ]
+    },
+    {
+        "id": "dc17f1b02c456ee7",
+        "type": "function",
+        "z": "267c3169178c5dbc",
+        "name": "ดึง Seed ",
+        "func": "msg.payload = msg.payload.seed;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 820,
+        "y": 860,
+        "wires": [
+            [
+                "3ce291d8bff67bcb"
+            ]
+        ]
+    },
+    {
+        "id": "3ce291d8bff67bcb",
+        "type": "ui_text",
+        "z": "267c3169178c5dbc",
+        "group": "b586a8f7.e060e8",
+        "order": 9,
+        "width": 0,
+        "height": 0,
+        "name": "Seed รูปล่าสุด",
+        "label": "Seed: ",
+        "format": "{{msg.payload}}",
+        "layout": "row-left",
+        "className": "",
+        "x": 1020,
+        "y": 860,
+        "wires": []
+    },
+    {
+        "id": "e9bcd24b620fdb67",
+        "type": "function",
+        "z": "267c3169178c5dbc",
+        "name": "คงข้อมูลในฟอร์ม",
+        "func": "\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 200,
+        "y": 240,
+        "wires": [
+            [
+                "22ddbf7b9e6879e6"
+            ]
+        ]
+    },
+    {
+        "id": "3f1e5ab759783865",
+        "type": "ui_text_input",
+        "z": "267c3169178c5dbc",
+        "name": "",
+        "label": "Edit English prompt: ",
+        "tooltip": "",
+        "group": "b586a8f7.e060e8",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "mode": "text",
+        "delay": 300,
+        "topic": "topic",
+        "sendOnBlur": true,
+        "className": "",
+        "topicType": "msg",
+        "x": 580,
+        "y": 580,
+        "wires": [
+            [
+                "9859de25265ecb29"
+            ]
+        ]
+    },
+    {
+        "id": "1206bff3711e2d99",
+        "type": "ui_button",
+        "z": "267c3169178c5dbc",
+        "name": "",
+        "group": "b586a8f7.e060e8",
+        "order": 7,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "Gen image",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 190,
+        "y": 780,
+        "wires": [
+            [
+                "b7443f07eede7b51"
+            ]
+        ]
+    },
+    {
+        "id": "501c90f9915e6d23",
+        "type": "debug",
+        "z": "267c3169178c5dbc",
+        "name": "debug 7",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1000,
+        "y": 580,
+        "wires": []
+    },
+    {
+        "id": "b306099d4aae131f",
+        "type": "debug",
+        "z": "267c3169178c5dbc",
+        "name": "debug 8",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 560,
+        "y": 720,
+        "wires": []
+    },
+    {
+        "id": "b7443f07eede7b51",
+        "type": "function",
+        "z": "267c3169178c5dbc",
+        "name": "Prompt Get ",
+        "func": "let prompt = flow.get(\"prompt\");\n\nmsg.payload = prompt\n\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 370,
+        "y": 780,
+        "wires": [
+            [
+                "b306099d4aae131f",
+                "9c2232b5e7a70d10",
+                "3f1e5ab759783865"
+            ]
+        ]
+    },
+    {
+        "id": "9859de25265ecb29",
+        "type": "function",
+        "z": "267c3169178c5dbc",
+        "name": "Prompt Save",
+        "func": "let prompt = msg.payload;\nflow.set(\"prompt\", prompt);\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 810,
+        "y": 580,
+        "wires": [
+            [
+                "501c90f9915e6d23",
+                "befb3e8507a7de1f"
+            ]
+        ]
+    },
+    {
+        "id": "f3454737ddad59df",
+        "type": "comment",
+        "z": "267c3169178c5dbc",
+        "name": "กดปุ่มสร้างภาพ",
+        "info": "",
+        "x": 190,
+        "y": 700,
+        "wires": []
+    },
+    {
+        "id": "369b7beaabfbd834",
+        "type": "google-translate",
+        "z": "267c3169178c5dbc",
+        "from": "th",
+        "name": "แปลเป็นภาษอังกฤษ",
+        "to": "en",
+        "host": "",
+        "port": "",
+        "x": 490,
+        "y": 500,
+        "wires": [
+            [
+                "3f1e5ab759783865"
+            ]
+        ]
+    },
+    {
+        "id": "0174318f44a311fc",
+        "type": "base64",
+        "z": "267c3169178c5dbc",
+        "name": "Encode Base64",
+        "action": "str",
+        "property": "payload",
+        "x": 800,
+        "y": 1020,
+        "wires": [
+            [
+                "0a6c5fdd7fad45e4",
+                "929c3ed637915690"
+            ]
+        ]
+    },
+    {
+        "id": "929c3ed637915690",
+        "type": "base64",
+        "z": "267c3169178c5dbc",
+        "name": "Base64 to String",
+        "action": "b64",
+        "property": "payload",
+        "x": 810,
+        "y": 1120,
+        "wires": [
+            [
+                "a9996aeec2987f8b",
+                "7e6bbd3fc86ee93b"
+            ]
+        ]
+    },
+    {
+        "id": "53bc7f38ec999106",
+        "type": "teachable machine",
+        "z": "267c3169178c5dbc",
+        "name": "",
+        "mode": "online",
+        "modelUri": "https://teachablemachine.withgoogle.com/models/x8Iro3F96/",
+        "localModel": "teachable_model",
+        "output": "best",
+        "activeThreshold": false,
+        "threshold": 80,
+        "activeMaxResults": false,
+        "maxResults": 3,
+        "passThrough": true,
+        "x": 1410,
+        "y": 1220,
+        "wires": [
+            [
+                "ef79fa162d0d548a",
+                "0ee350bd297e87fc"
+            ]
+        ]
+    },
+    {
+        "id": "0ee350bd297e87fc",
+        "type": "debug",
+        "z": "267c3169178c5dbc",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1590,
+        "y": 1140,
+        "wires": []
+    },
+    {
+        "id": "b3948405b78f5368",
+        "type": "file in",
+        "z": "267c3169178c5dbc",
+        "name": "Get image",
+        "filename": "/Users/prakitsmacbookpro/Desktop/1234567.jpg",
+        "format": "",
+        "chunk": false,
+        "sendError": false,
+        "encoding": "none",
+        "allProps": false,
+        "x": 1250,
+        "y": 1340,
+        "wires": [
+            [
+                "53bc7f38ec999106"
+            ]
+        ]
+    },
+    {
+        "id": "7e6bbd3fc86ee93b",
+        "type": "file",
+        "z": "267c3169178c5dbc",
+        "name": "Save image",
+        "filename": "/Users/prakitsmacbookpro/Desktop/1234567.jpg",
+        "appendNewline": true,
+        "createDir": false,
+        "overwriteFile": "true",
+        "encoding": "base64",
+        "x": 1030,
+        "y": 1340,
+        "wires": [
+            [
+                "bc52be87a0774ac5"
+            ]
+        ]
+    },
+    {
+        "id": "bc52be87a0774ac5",
+        "type": "switch",
+        "z": "267c3169178c5dbc",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "nnull"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 1030,
+        "y": 1400,
+        "wires": [
+            [
+                "b3948405b78f5368"
+            ]
+        ]
+    },
+    {
+        "id": "7b20a25a0fdcdce6",
+        "type": "ui_text_input",
+        "z": "267c3169178c5dbc",
+        "name": "",
+        "label": "Edit Thai prompt",
+        "tooltip": "",
+        "group": "b586a8f7.e060e8",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "mode": "text",
+        "delay": 300,
+        "topic": "topic",
+        "sendOnBlur": true,
+        "className": "",
+        "topicType": "msg",
+        "x": 710,
+        "y": 200,
+        "wires": [
+            [
+                "cbf0e3439a99c88f",
+                "369b7beaabfbd834"
+            ]
+        ]
+    },
+    {
+        "id": "2bc637d47beefdbb",
+        "type": "ui_form",
+        "z": "267c3169178c5dbc",
+        "name": "Form seed",
+        "label": "",
+        "group": "b586a8f7.e060e8",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "options": [
+            {
+                "label": "Seed ( Default = -1)",
+                "value": "seed",
+                "type": "number",
+                "required": false,
+                "rows": null
+            }
+        ],
+        "formValue": {
+            "seed": ""
+        },
+        "payload": "",
+        "submit": "บันทึก Seed",
+        "cancel": "ยกเลิก",
+        "topic": "topic",
+        "topicType": "msg",
+        "splitLayout": "",
+        "className": "",
+        "x": 1250,
+        "y": 320,
+        "wires": [
+            [
+                "82cdf7e901e3fe94",
+                "81c88d361ab094af"
+            ]
+        ]
+    },
+    {
+        "id": "82cdf7e901e3fe94",
+        "type": "function",
+        "z": "267c3169178c5dbc",
+        "name": "คงข้อมูลในฟอร์ม",
+        "func": "\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1240,
+        "y": 380,
+        "wires": [
+            [
+                "2bc637d47beefdbb"
+            ]
+        ]
+    },
+    {
+        "id": "81c88d361ab094af",
+        "type": "function",
+        "z": "267c3169178c5dbc",
+        "name": "Save Seed",
+        "func": "let seed = msg.payload.seed;\nflow.set(\"seed\", seed);\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1470,
+        "y": 360,
+        "wires": [
+            [
+                "8a5480a10a7b15e9"
+            ]
+        ]
+    },
+    {
+        "id": "8a5480a10a7b15e9",
+        "type": "debug",
+        "z": "267c3169178c5dbc",
+        "name": "debug 5",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1640,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "ef79fa162d0d548a",
+        "type": "function",
+        "z": "267c3169178c5dbc",
+        "name": "อ่าน Class และ Score",
+        "func": "let classs = msg.payload[0].class;\nlet score = msg.payload[0].score;\n\nvar msg1 = { payload: classs }\nvar msg2 = { payload: score }\n\nreturn [msg1, msg2];",
+        "outputs": 2,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1620,
+        "y": 1280,
+        "wires": [
+            [
+                "b7f0380e178e0570"
+            ],
+            [
+                "66ecf5e16b433bc9"
+            ]
+        ]
+    },
+    {
+        "id": "b7f0380e178e0570",
+        "type": "ui_text",
+        "z": "267c3169178c5dbc",
+        "group": "b586a8f7.e060e8",
+        "order": 10,
+        "width": 0,
+        "height": 0,
+        "name": "Class TM",
+        "label": "Class Teachable machine: ",
+        "format": "{{msg.payload}}",
+        "layout": "row-left",
+        "className": "",
+        "x": 1820,
+        "y": 1260,
+        "wires": []
+    },
+    {
+        "id": "66ecf5e16b433bc9",
+        "type": "ui_text",
+        "z": "267c3169178c5dbc",
+        "group": "b586a8f7.e060e8",
+        "order": 11,
+        "width": 0,
+        "height": 0,
+        "name": "Score TM",
+        "label": "Score Teachable machine: ",
+        "format": "{{msg.payload}}",
+        "layout": "row-left",
+        "className": "",
+        "x": 1820,
+        "y": 1300,
+        "wires": []
+    },
+    {
+        "id": "dc86e25a2bbe1139",
+        "type": "ui_spacer",
+        "z": "267c3169178c5dbc",
+        "name": "spacer",
+        "group": "b586a8f7.e060e8",
+        "order": 4,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "ee92ba46946daf09",
+        "type": "ui_spacer",
+        "z": "267c3169178c5dbc",
+        "name": "spacer",
+        "group": "b586a8f7.e060e8",
+        "order": 12,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "b586a8f7.e060e8",
+        "type": "ui_group",
+        "name": "ผลลัพธ์",
+        "tab": "c40344b0.c82658",
+        "order": 2,
+        "disp": true,
+        "width": "16",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "04288908e88d019f",
+        "type": "ui_group",
+        "name": "กำหนดอัตลักษณ์ ของใบหน้า",
+        "tab": "c40344b0.c82658",
+        "order": 1,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "c40344b0.c82658",
+        "type": "ui_tab",
+        "name": " Forensic Police Sketches AI-tist",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
+    }
+]
